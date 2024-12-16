@@ -2,7 +2,7 @@
 /*
 Plugin Name: Very Simple Maintenance Mode
 Description: A simple plugin to enable a maintenance mode with custom title, message, and styles.
-Version: 1.0
+Version: 1.1
 Author: Dominik
 */
 
@@ -21,7 +21,10 @@ function maintenance_mode_settings_page() {
     <div class="wrap">
         <h2>Maintenance Mode Settings</h2>
         <form method="post" action="options.php">
-            <?php settings_fields( 'maintenance_mode_group' ); ?>
+            <?php
+            settings_fields( 'maintenance_mode_group' );
+            wp_nonce_field( 'maintenance_mode_nonce_action', 'maintenance_mode_nonce' ); // Add nonce for security
+            ?>
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row">Enable Maintenance Mode</th>
@@ -30,17 +33,17 @@ function maintenance_mode_settings_page() {
 
                 <tr valign="top">
                     <th scope="row">Message Title</th>
-                    <td><input type="text" name="maintenance_mode_title" value="<?php echo get_option( 'maintenance_mode_title' ); ?>" /></td>
+                    <td><input type="text" name="maintenance_mode_title" value="<?php echo esc_attr( get_option( 'maintenance_mode_title' ) ); ?>" /></td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">Message Content</th>
-                    <td><textarea name="maintenance_mode_message"><?php echo get_option( 'maintenance_mode_message' ); ?></textarea></td>
+                    <td><textarea name="maintenance_mode_message"><?php echo esc_textarea( get_option( 'maintenance_mode_message' ) ); ?></textarea></td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">Custom Styles</th>
-                    <td><textarea name="maintenance_mode_styles"><?php echo get_option( 'maintenance_mode_styles' ); ?></textarea></td>
+                    <td><textarea style="width: 400px; height: 400px; " name="maintenance_mode_styles"><?php echo esc_textarea( get_option( 'maintenance_mode_styles' ) ); ?></textarea></td>
                 </tr>
             </table>
             <?php submit_button(); ?>
