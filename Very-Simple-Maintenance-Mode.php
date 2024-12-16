@@ -1,133 +1,92 @@
 <?php
-/**
- * Plugin Name: Custom DB Error Message
- * Description: Changes the database connection error message to a custom one with editable title, content, and style.
- * Version: 1.0
- * Author: Dominik
- * License: GPL2
- */
+/*
+Plugin Name: Very Simple Maintenance Mode
+Description: A simple plugin to enable a maintenance mode with custom title, message, and styles.
+Version: 1.0
+Author: Dominik
+*/
 
-// Add a settings page to the admin menu
-function custom_db_error_message_menu() {
-    add_options_page(
-        'Custom DB Error Message Settings', // Page title
-        'Custom DB Error Message', // Menu title
-        'manage_options', // Capability required to access the page
-        'custom-db-error-message', // Menu slug
-        'custom_db_error_message_settings_page' // Callback function to display the settings page
-    );
+// 1. Add options to the WordPress database to store the settings
+function maintenance_mode_settings() {
+    add_option( 'maintenance_mode_enabled', 'off' ); // Default is off
+    add_option( 'maintenance_mode_title', 'Site Under Construction' ); // Default title
+    add_option( 'maintenance_mode_message', 'The site is currently under maintenance. Please check back later.' ); // Default message
+    add_option( 'maintenance_mode_styles', 'body { background-color: #f0f0f0; text-align: center; padding: 50px; } h1 { color: red; }' ); // Default styles
 }
-add_action('admin_menu', 'custom_db_error_message_menu');
+add_action( 'admin_init', 'maintenance_mode_settings' );
 
-// Display the settings page
-function custom_db_error_message_settings_page() {
+// 2. Create a settings page in the admin panel where the user can modify settings
+function maintenance_mode_settings_page() {
     ?>
     <div class="wrap">
-        <h1>Database Error Message Settings</h1>
+        <h2>Maintenance Mode Settings</h2>
         <form method="post" action="options.php">
-            <?php
-            // Security measure
-            settings_fields('custom_db_error_message_options_group');
-            // Load settings sections
-            do_settings_sections('custom-db-error-message');
-            ?>
-            <p class="submit">
-                <input type="submit" class="button-primary" value="Save Changes" />
-            </p>
+            <?php settings_fields( 'maintenance_mode_group' ); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable Maintenance Mode</th>
+                    <td><input type="checkbox" name="maintenance_mode_enabled" value="on" <?php echo get_option( 'maintenance_mode_enabled' ) == 'on' ? 'checked' : ''; ?> /></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Message Title</th>
+                    <td><input type="text" name="maintenance_mode_title" value="<?php echo get_option( 'maintenance_mode_title' ); ?>" /></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Message Content</th>
+                    <td><textarea name="maintenance_mode_message"><?php echo get_option( 'maintenance_mode_message' ); ?></textarea></td>
+                </tr>
+
+                <tr valign="top">
+                    <th scope="row">Custom Styles</th>
+                    <td><textarea name="maintenance_mode_styles"><?php echo get_option( 'maintenance_mode_styles' ); ?></textarea></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
         </form>
     </div>
     <?php
 }
 
-// Register plugin settings
-function custom_db_error_message_settings_init() {
-    // Register our options group and option name
-    register_setting('custom_db_error_message_options_group', 'custom_db_error_message_options');
-    
-    // Add a settings section
-    add_settings_section(
-        'custom_db_error_message_section', 
-        'Customize Database Error Message', 
-        null, 
-        'custom-db-error-message'
-    );
-
-    // Add fields to the section
-    add_settings_field(
-        'custom_db_error_message_title', 
-        'Error Message Title', 
-        'custom_db_error_message_title_field', 
-        'custom-db-error-message', 
-        'custom_db_error_message_section'
-    );
-    
-    add_settings_field(
-        'custom_db_error_message_content', 
-        'Error Message Content', 
-        'custom_db_error_message_content_field', 
-        'custom-db-error-message', 
-        'custom_db_error_message_section'
-    );
-    
-    add_settings_field(
-        'custom_db_error_message_style', 
-        'Custom CSS Styles', 
-        'custom_db_error_message_style_field', 
-        'custom-db-error-message', 
-        'custom_db_error_message_section'
-    );
+// 3. Add the settings page to the WordPress admin menu
+function maintenance_mode_menu() {
+    add_options_page( 'Maintenance Mode Settings', 'Maintenance Mode', 'manage_options', 'maintenance_mode', 'maintenance_mode_settings_page' );
 }
-add_action('admin_init', 'custom_db_error_message_settings_init');
+add_action( 'admin_menu', 'maintenance_mode_menu' );
 
-// Display the title field
-function custom_db_error_message_title_field() {
-    $options = get_option('custom_db_error_message_options');
-    ?>
-    <input type="text" name="custom_db_error_message_options[title]" value="<?php echo esc_attr($options['title'] ?? 'Site Under Construction'); ?>" class="regular-text" />
-    <?php
+// 4. Register the settings so they can be saved and retrieved
+function maintenance_mode_register_settings() {
+    register_setting( 'maintenance_mode_group', 'maintenance_mode_enabled' );
+    register_setting( 'maintenance_mode_group', 'maintenance_mode_title' );
+    register_setting( 'maintenance_mode_group', 'maintenance_mode_message' );
+    register_setting( 'maintenance_mode_group', 'maintenance_mode_styles' );
 }
+add_action( 'admin_init', 'maintenance_mode_register_settings' );
 
-// Display the content field
-function custom_db_error_message_content_field() {
-    $options = get_option('custom_db_error_message_options');
-    ?>
-    <textarea name="custom_db_error_message_options[content]" rows="5" class="large-text"><?php echo esc_textarea($options['content'] ?? 'Sorry, our site is temporarily unavailable due to technical issues. Please try again later.'); ?></textarea>
-    <?php
-}
-
-// Display the CSS styles field
-function custom_db_error_message_style_field() {
-    $options = get_option('custom_db_error_message_options');
-    ?>
-    <textarea name="custom_db_error_message_options[style]" rows="5" class="large-text"><?php echo esc_textarea($options['style'] ?? ''); ?></textarea>
-    <?php
-}
-
-// Add custom error message if database connection fails
-function custom_db_error_message() {
-    // Skip if the WordPress installation process is running
-    if ( defined('WP_INSTALLING') && WP_INSTALLING ) {
-        return;
-    }
-
-    // Only show the custom message if the user is not logged in and not in admin
-    if ( !is_user_logged_in() && !is_admin() ) {
-        // Get the stored options
-        $options = get_option('custom_db_error_message_options');
-        $title = esc_html($options['title'] ?? 'Site Under Construction');
-        $content = esc_html($options['content'] ?? 'Sorry, our site is temporarily unavailable due to technical issues. Please try again later.');
-        $style = esc_html($options['style'] ?? '');
-
-        // Display the custom error message with the title, content, and styles
-        echo '<html><head><title>' . $title . '</title></head><body>';
-        echo '<h1 style="text-align: center; color: red;">' . $content . '</h1>';
-        if ($style) {
-            echo '<style>' . $style . '</style>';
+// 5. Check if maintenance mode is enabled, and display the custom message
+function check_maintenance_mode() {
+    // If maintenance mode is enabled
+    if ( get_option( 'maintenance_mode_enabled' ) == 'on' ) {
+        // Only display the message for non-administrators
+        if ( ! current_user_can( 'administrator' ) ) {
+            // Get the custom title, content, and styles for the message
+            $title = get_option( 'maintenance_mode_title', 'Site Under Construction' );
+            $message = get_option( 'maintenance_mode_message', 'The site is currently under maintenance.' );
+            $styles = get_option( 'maintenance_mode_styles', 'body { background-color: #000; text-align: center; padding: 50px; } h1 { color: #fff; }' );
+            
+            // Output the custom styles
+            echo '<style>' . esc_html( $styles ) . '</style>';
+            
+            // Display the custom title and content
+            echo '<h1>' . esc_html( $title ) . '</h1>';
+            echo '<p>' . esc_html( $message ) . '</p>';
+            exit; // Stop further page load
         }
-        echo '</body></html>';
-        exit;
     }
 }
 
-// Hook into the shutdown process to display the custom error message
-add_action('shutdown', 'custom_db_error_message', 0);
+// 6. Trigger the check for maintenance mode when loading the page
+add_action( 'wp', 'check_maintenance_mode' );
+
+?>
