@@ -1,52 +1,39 @@
-# Custom DB Error Message Plugin
+# Maintenance Mode Plugin
 
-This WordPress plugin allows you to customize the default database connection error message displayed on your site. You can modify the title, content, and style of the error message directly from the WordPress admin panel. This is especially useful for displaying a user-friendly message when the site is temporarily unavailable due to a database connection issue.
+A  very simple WordPress plugin to enable and customize a "Maintenance Mode" for your site. With this plugin, you can easily display a custom message, title, and style when your site is under construction or maintenance.
 
 ## Features
 
-- Customize the error message title, content, and style.
-- Change the default database connection error message displayed by WordPress.
-- Easily editable settings via the WordPress admin panel.
-- Add custom CSS to style the error page.
-- Supports multi-line content for the error message.
+- **Enable/Disable Maintenance Mode**: Turn the maintenance mode on or off directly from the WordPress admin panel.
+- **Customizable Title and Message**: Set a custom title and message to inform visitors about the maintenance.
+- **Custom Styles**: Add custom CSS styles to modify the appearance of the maintenance page.
+- **Admin Access**: Only non-administrators will see the maintenance message; admins can still access the site normally.
 
 ## Installation
 
-1. Download the plugin files.
-2. Upload the `custom-db-error-message` folder to your WordPress `wp-content/plugins/` directory.
-3. Go to the WordPress admin panel and navigate to **Plugins** → **Installed Plugins**.
-4. Activate the "Custom DB Error Message" plugin.
-5. Once activated, go to **Settings** → **Custom DB Error Message** to configure the title, content, and style of your error message.
+1. Download the plugin files or clone this repository to your WordPress `wp-content/plugins/` directory.
+2. Go to your WordPress admin panel.
+3. Navigate to **Plugins > Installed Plugins** and activate the **Maintenance Mode** plugin.
+4. Once activated, go to **Settings > Maintenance Mode** to configure the plugin settings.
+   - Enable maintenance mode.
+   - Customize the title, message, and styles for the maintenance page.
 
-## Configuration
+## Usage
 
-After installing and activating the plugin, you can configure the following settings:
+Once maintenance mode is enabled, visitors (except administrators) will see the custom maintenance message and styling you configured. Admins can continue browsing the site normally.
 
-- **Error Message Title**: Customize the title of the error page.
-- **Error Message Content**: Add a message that will be displayed when there is a database connection issue.
-- **Custom CSS Styles**: Add any custom CSS to style the error page to your preference.
+To disable maintenance mode, simply uncheck the "Enable Maintenance Mode" option in the plugin settings.
 
-## Example Usage
+## Customization
 
-Here’s how the error page might look after customization:
+- **Title**: Set a custom title for the maintenance page.
+- **Message**: Customize the message displayed to visitors.
+- **Styles**: Use CSS to style the maintenance page (e.g., background color, font styles).
 
-- **Title**: Site Under Construction
-- **Content**: Sorry, our site is temporarily unavailable due to technical issues. Please try again later.
-- **Custom CSS**: You can add your custom styles to control the appearance of the error message.
+## Contributing
 
-### Sample Error Page
+If you have any suggestions or improvements, feel free to fork this repository, make changes, and create a pull request.
 
-When a database connection issue occurs, the plugin will display the following message:
+## License
 
-```html
-<html>
-<head>
-    <title>Site Under Construction</title>
-</head>
-<body>
-    <h1 style="text-align: center; color: red;">Sorry, our site is temporarily unavailable due to technical issues. Please try again later.</h1>
-    <style>
-        /* Custom CSS goes here */
-    </style>
-</body>
-</html>
+This project is open-source and available under the [MIT License](LICENSE).
